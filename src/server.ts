@@ -1,7 +1,14 @@
 import express from "express";
 import cors from "cors";
 import { getDigipet } from "./digipet/model";
-import { hatchDigipet, walkDigipet } from "./digipet/controller";
+import {
+  hatchDigipet,
+  walkDigipet,
+  trainDigipet,
+  feedDigipet,
+  ignoreDigipet,
+  rehomeDigipet,
+} from "./digipet/controller";
 
 const app = express();
 
@@ -39,6 +46,22 @@ app.get("/digipet", (req, res) => {
   }
 });
 
+app.get("/digipet/rehome", (req, res) => {
+  const digipet = getDigipet();
+  if (digipet) {
+    rehomeDigipet();
+    res.json({
+      message:
+        "You have successfully rehomed your Digipet. To hatch a new one, try /digipet/hatch.",
+    });
+  } else {
+    res.json({
+      message:
+        "You don't have a digipet to rehome! Try hatching one with /digipet/hatch",
+    });
+  }
+});
+
 app.get("/digipet/hatch", (req, res) => {
   const digipet = getDigipet();
   if (digipet) {
@@ -62,6 +85,53 @@ app.get("/digipet/walk", (req, res) => {
     walkDigipet();
     res.json({
       message: "You walked your digipet. It looks happier now!",
+      digipet: getDigipet(),
+    });
+  } else {
+    res.json({
+      message:
+        "You don't have a digipet to walk! Try hatching one with /digipet/hatch",
+    });
+  }
+});
+
+app.get("/digipet/feed", (req, res) => {
+  if (getDigipet()) {
+    feedDigipet();
+    res.json({
+      message: "You fed your digipet. Feeding improves their nutrition!",
+      digipet: getDigipet(),
+    });
+  } else {
+    res.json({
+      message:
+        "You don't have a digipet to feed! Try hatching one with /digipet/hatch",
+    });
+  }
+});
+
+app.get("/digipet/ignore", (req, res) => {
+  if (getDigipet()) {
+    ignoreDigipet();
+    res.json({
+      message:
+        "You ignored your digipet :( . Look how its stats dropped. You are vile",
+      digipet: getDigipet(),
+    });
+  } else {
+    res.json({
+      message:
+        "You don't have a digipet to ignore (luckily)! Try hatching one with /digipet/hatch",
+    });
+  }
+});
+
+app.get("/digipet/train", (req, res) => {
+  // check the user has a digipet to train
+  if (getDigipet()) {
+    trainDigipet();
+    res.json({
+      message: "You trained your digipet. It's more disciplined now!",
       digipet: getDigipet(),
     });
   } else {
